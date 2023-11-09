@@ -70,6 +70,7 @@ struct SwapChainSupportDetails {
 struct Vertex {
     glm::vec2 pos;
     glm::vec3 color;
+    glm::float32 pointSize;
 
     static VkVertexInputBindingDescription getBindingDescription() {
         VkVertexInputBindingDescription bindingDescription{};
@@ -80,8 +81,8 @@ struct Vertex {
         return bindingDescription;
     }
 
-    static std::array<VkVertexInputAttributeDescription, 2> getAttributeDescriptions() {
-        std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions{};
+    static std::array<VkVertexInputAttributeDescription, 3> getAttributeDescriptions() {
+        std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions{};
 
         attributeDescriptions[0].binding = 0;
         attributeDescriptions[0].location = 0;
@@ -93,38 +94,23 @@ struct Vertex {
         attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
         attributeDescriptions[1].offset = offsetof(Vertex, color);
 
+        attributeDescriptions[2].binding = 0;
+        attributeDescriptions[2].location = 2;
+        attributeDescriptions[2].format = VK_FORMAT_R32_SFLOAT;
+        attributeDescriptions[1].offset = offsetof(Vertex, pointSize);
+
         return attributeDescriptions;
     }
 };
 
-//        1     3-----5
-//       / \     \   /
-//      /   \     \ /
-//     0-----2     4
-// 0 -> 1 -> 2
-// 3 -> 4 -> 5
-// num of primitives: n / 3 = 2
-// p[i] = {v[3i], v[3i+1], v[3i+2]}
-// provoking point: 0, 3
-// triangle primitives are defined around a shared common vertex, in this case 
-//
-//  3-----4
-//   \   /
-//    \ /
-//     5   clockwise
-//
-//  3-----5
-//   \   /
-//    \ /
-//     4   counter-clockwise
 const std::vector<Vertex> vertices = {
-    {{-0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}},
-    {{-0.25f, -0.5f}, {0.0f, 1.0f, 0.0f}},
-    {{0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
-    {{0.25f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-    // {{0.75f, -0.5f}, {0.0f, 1.0f, 0.0f}},
-    {{0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}},
-    {{0.75f, -0.5f}, {0.0f, 1.0f, 0.0f}}
+    {{-0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, 0.5f},
+    {{-0.25f, -0.5f}, {0.0f, 1.0f, 0.0f}, 0.5f},
+    {{0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}, 0.5f},
+    {{0.25f, -0.5f}, {1.0f, 0.0f, 0.0f}, 0.5f},
+    // {{0.75f, -0.5f}, {0.0f, 1.0f, 0.0f}, 0.5f},
+    {{0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, 0.5f},
+    {{0.75f, -0.5f}, {0.0f, 1.0f, 0.0f}, 0.5f}
 };
 
 class HelloTriangleApplication {
