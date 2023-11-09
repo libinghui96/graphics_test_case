@@ -97,11 +97,11 @@ struct Vertex {
     }
 };
 
-// line lists with adjacency
-// each consecutive set of four vertices defines a single line primitive with adjacency
-// p[i] = {v[4i], v[4i+1], v[4i+2], v[4i+3]}
-// num of primitives: n / 4
-// provoking vertex for p[i] : v[4i+1]
+// line strips with adjacency
+// one line primitive with adjancency is defined by each vertex and the following vertex
+// p[i] = {v[i], v[i+1], v[i+2], v[i+3]}
+// num of primitives: max(0, vertexCount - 3)
+// provoking vertex for p[i] : v[i+1]
 const std::vector<Vertex> vertices = {
     {{-0.75f, -0.5f}, {0.0f, 0.0f, 1.0f}},
     {{-0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}},
@@ -552,7 +552,7 @@ private:
 
         VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
         inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-        inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST_WITH_ADJACENCY;
+        inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_LINE_STRIP_WITH_ADJACENCY;
         inputAssembly.primitiveRestartEnable = VK_FALSE;
 
         VkPipelineViewportStateCreateInfo viewportState{};
