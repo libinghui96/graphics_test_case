@@ -97,14 +97,20 @@ struct Vertex {
     }
 };
 
+// lists with adjacency
+// each consecutive set of four vertices defines a single line primitive with adjacency
+// p[i] = {v[4i], v[4i+1], v[4i+2], v[4i+3]}
+// num of primitives: n / 4
+// provoking vertex for p[i] : v[4i+1]
 const std::vector<Vertex> vertices = {
+    {{-0.75f, -0.5f}, {0.0f, 0.0f, 1.0f}},
     {{-0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}},
     {{-0.25f, -0.5f}, {0.0f, 1.0f, 0.0f}},
     {{0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
     {{0.25f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-    // {{0.75f, -0.5f}, {0.0f, 1.0f, 0.0f}},
     {{0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}},
-    {{0.75f, -0.5f}, {0.0f, 1.0f, 0.0f}}
+    {{0.75f, -0.5f}, {0.0f, 1.0f, 0.0f}},
+    {{1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}}
 };
 
 class HelloTriangleApplication {
