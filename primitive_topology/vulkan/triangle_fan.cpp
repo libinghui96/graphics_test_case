@@ -97,20 +97,23 @@ struct Vertex {
     }
 };
 
-//        1-----3
+//        2-----3
 //       / \   / \
 //      /   \ /   \
-//     0-----2-----4
-// 0->1->2
-// 1->3->2
-// 2->3->4
+//     1-----0-----4
+// 0 -> 1 -> 2
+// 0 -> 2 -> 3
+// 0 -> 3 -> 4
+// num of primitives: n - 2 = 3
+// p[i] = {v[i+1], v[i+2], v0}
+// provoking point: 1, 2, 3
+// triangle primitives are defined around a shared common vertex, in this case v0
 const std::vector<Vertex> vertices = {
+    {{0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
     {{-0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}},
     {{-0.25f, -0.5f}, {0.0f, 1.0f, 0.0f}},
-    {{0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
     {{0.25f, -0.5f}, {1.0f, 0.0f, 0.0f}},
     {{0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}},
-    {{0.75f, -0.5f}, {0.0f, 1.0f, 0.0f}}
 };
 
 class HelloTriangleApplication {
