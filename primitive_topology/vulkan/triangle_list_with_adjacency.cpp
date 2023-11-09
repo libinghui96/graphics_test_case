@@ -97,9 +97,11 @@ struct Vertex {
     }
 };
 
-// triangle list with adjacency
+// triangle lists with adjacency
 // each consecutive set of six vertices defines a single triangle primitive with adjacency
 // p[i] = {v[6i], v[6i+1], v[6i+2], v[6i+3], v[6i+4], v[6i+5]}
+// num of primitives: n / 6
+// provoking vertex: 6i
 const std::vector<Vertex> vertices = {
     {{-0.25f, 0.0f}, {0.0f, 0.0f, 1.0f}},
     {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
