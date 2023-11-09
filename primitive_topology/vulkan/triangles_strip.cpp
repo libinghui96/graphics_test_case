@@ -97,6 +97,15 @@ struct Vertex {
     }
 };
 
+//        1-----3
+//       / \   / \
+//      /   \ /   \
+//     0-----2-----4
+// 0 -> 1 -> 2
+// 1 -> 3 -> 2 (reverse 1 -> 2)
+// 2 -> 3 -> 4 (reverse 3 -> 2)
+// num of primitives: n - 2 = 3
+// provoking point 0, 1, 2
 const std::vector<Vertex> vertices = {
     {{-0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}},
     {{-0.25f, -0.5f}, {0.0f, 1.0f, 0.0f}},
