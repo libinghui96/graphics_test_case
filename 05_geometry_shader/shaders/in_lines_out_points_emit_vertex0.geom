@@ -3,7 +3,7 @@
 #version 450 core
 
 layout(lines) in;
-layout(points, max_vertices = 8) out;
+layout(points, max_vertices = 4) out;
 
 layout(location = 0) in vec3 inColor[];
 layout(location = 0) out vec3 outColor;
