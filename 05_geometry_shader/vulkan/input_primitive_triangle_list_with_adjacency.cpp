@@ -97,34 +97,18 @@ struct Vertex {
     }
 };
 
-//        1     3-----5
-//       / \     \   /
-//      /   \     \ /
-//     0-----2     4
-// 0 -> 1 -> 2
-// 3 -> 4 -> 5
-// num of primitives: n / 3 = 2
-// p[i] = {v[3i], v[3i+1], v[3i+2]}
-// provoking point: 0, 3
-// triangle primitives are defined around a shared common vertex, in this case 
-//
-//  3-----4
-//   \   /
-//    \ /
-//     5   clockwise
-//
-//  3-----5
-//   \   /
-//    \ /
-//     4   counter-clockwise
+// triangle lists with adjacency
+// each consecutive set of six vertices defines a single triangle primitive with adjacency
+// p[i] = {v[6i], v[6i+1], v[6i+2], v[6i+3], v[6i+4], v[6i+5]}
+// num of primitives: n / 6
+// provoking vertex: 6i
 const std::vector<Vertex> vertices = {
-    {{-0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}},
-    {{-0.25f, -0.5f}, {0.0f, 1.0f, 0.0f}},
-    {{0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
-    {{0.25f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-    // {{0.75f, -0.5f}, {0.0f, 1.0f, 0.0f}},
-    {{0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}},
-    {{0.75f, -0.5f}, {0.0f, 1.0f, 0.0f}}
+    {{-0.25f, 0.0f}, {0.0f, 0.0f, 1.0f}},
+    {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+    {{0.0f, -0.5f}, {0.0f, 1.0f, 0.0f}},
+    {{0.5f, -0.5f}, {0.0f, 0.0f, 1.0f}},
+    {{0.25f, 0.0f}, {1.0f, 0.0f, 0.0f}},
+    {{0.0f, 0.5f}, {0.0f, 1.0f, 0.0f}}
 };
 
 class HelloTriangleApplication {
@@ -381,7 +365,6 @@ private:
         }
 
         VkPhysicalDeviceFeatures deviceFeatures{};
-        VkPhysicalDeviceFeatures deviceFeatures{};
         vkGetPhysicalDeviceFeatures(physicalDevice, &deviceFeatures);
         if (deviceFeatures.geometryShader != VK_TRUE) {
             throw std::runtime_error("device not support geometry shader!");
@@ -575,7 +558,7 @@ private:
 
         VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
         inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-        inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+        inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST_WITH_ADJACENCY;
         inputAssembly.primitiveRestartEnable = VK_FALSE;
 
         VkPipelineViewportStateCreateInfo viewportState{};
