@@ -381,6 +381,7 @@ private:
         }
 
         VkPhysicalDeviceFeatures deviceFeatures{};
+        VkPhysicalDeviceFeatures deviceFeatures{};
         vkGetPhysicalDeviceFeatures(physicalDevice, &deviceFeatures);
         if (deviceFeatures.geometryShader != VK_TRUE) {
             throw std::runtime_error("device not support geometry shader!");

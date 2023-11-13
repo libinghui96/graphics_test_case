@@ -97,34 +97,23 @@ struct Vertex {
     }
 };
 
-//        1     3-----5
-//       / \     \   /
-//      /   \     \ /
-//     0-----2     4
+//        2-----3
+//       / \   / \
+//      /   \ /   \
+//     1-----0-----4
 // 0 -> 1 -> 2
-// 3 -> 4 -> 5
-// num of primitives: n / 3 = 2
-// p[i] = {v[3i], v[3i+1], v[3i+2]}
-// provoking point: 0, 3
-// triangle primitives are defined around a shared common vertex, in this case 
-//
-//  3-----4
-//   \   /
-//    \ /
-//     5   clockwise
-//
-//  3-----5
-//   \   /
-//    \ /
-//     4   counter-clockwise
+// 0 -> 2 -> 3
+// 0 -> 3 -> 4
+// num of primitives: n - 2 = 3
+// p[i] = {v[i+1], v[i+2], v0}
+// provoking point: 1, 2, 3
+// triangle primitives are defined around a shared common vertex, in this case v0
 const std::vector<Vertex> vertices = {
+    {{0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
     {{-0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}},
     {{-0.25f, -0.5f}, {0.0f, 1.0f, 0.0f}},
-    {{0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
     {{0.25f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-    // {{0.75f, -0.5f}, {0.0f, 1.0f, 0.0f}},
     {{0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}},
-    {{0.75f, -0.5f}, {0.0f, 1.0f, 0.0f}}
 };
 
 class HelloTriangleApplication {
@@ -381,10 +370,6 @@ private:
         }
 
         VkPhysicalDeviceFeatures deviceFeatures{};
-        vkGetPhysicalDeviceFeatures(physicalDevice, &deviceFeatures);
-        if (deviceFeatures.geometryShader != VK_TRUE) {
-            throw std::runtime_error("device not support geometry shader!");
-        }
 
         VkDeviceCreateInfo createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
@@ -534,11 +519,9 @@ private:
 
     void createGraphicsPipeline() {
         auto vertShaderCode = readFile("shaders/vert.spv");
-        auto geomShaderCode = readFile("shaders/geom.spv");
         auto fragShaderCode = readFile("shaders/frag.spv");
 
         VkShaderModule vertShaderModule = createShaderModule(vertShaderCode);
-        VkShaderModule geomShaderModule = createShaderModule(geomShaderCode);
         VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);
 
         VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
@@ -547,19 +530,13 @@ private:
         vertShaderStageInfo.module = vertShaderModule;
         vertShaderStageInfo.pName = "main";
 
-        VkPipelineShaderStageCreateInfo geomShaderStageInfo{};
-        geomShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-        geomShaderStageInfo.stage = VK_SHADER_STAGE_GEOMETRY_BIT;
-        geomShaderStageInfo.module = geomShaderModule;
-        geomShaderStageInfo.pName = "main";
-
         VkPipelineShaderStageCreateInfo fragShaderStageInfo{};
         fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
         fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
         fragShaderStageInfo.module = fragShaderModule;
         fragShaderStageInfo.pName = "main";
 
-        VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, geomShaderStageInfo, fragShaderStageInfo };
+        VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
 
         VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
         vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -574,7 +551,7 @@ private:
 
         VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
         inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-        inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+        inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_FAN;
         inputAssembly.primitiveRestartEnable = VK_FALSE;
 
         VkPipelineViewportStateCreateInfo viewportState{};
@@ -588,8 +565,8 @@ private:
         rasterizer.rasterizerDiscardEnable = VK_FALSE;
         rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
         rasterizer.lineWidth = 1.0f;
-        rasterizer.cullMode = VK_CULL_MODE_NONE;
-        rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+        rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
+        rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE;
         rasterizer.depthBiasEnable = VK_FALSE;
 
         VkPipelineMultisampleStateCreateInfo multisampling{};
@@ -632,7 +609,7 @@ private:
 
         VkGraphicsPipelineCreateInfo pipelineInfo{};
         pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-        pipelineInfo.stageCount = 3;
+        pipelineInfo.stageCount = 2;
         pipelineInfo.pStages = shaderStages;
         pipelineInfo.pVertexInputState = &vertexInputInfo;
         pipelineInfo.pInputAssemblyState = &inputAssembly;
@@ -651,7 +628,6 @@ private:
         }
 
         vkDestroyShaderModule(device, fragShaderModule, nullptr);
-        vkDestroyShaderModule(device, geomShaderModule, nullptr);
         vkDestroyShaderModule(device, vertShaderModule, nullptr);
     }
 
