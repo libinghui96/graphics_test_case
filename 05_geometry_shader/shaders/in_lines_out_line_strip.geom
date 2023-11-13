@@ -1,3 +1,5 @@
+// In this we can see prmitive topology only effects in vertices emit from the same prmitive
+
 // only emit vertex 0 of primitive to test the difference of input primitives
 // VK_PRIMITIVE_TOPOLOGY_LINE_LIST and VK_PRIMITIVE_TOPOLOGY_LINE_STRIP
 #version 450 core
@@ -37,6 +39,7 @@ void main() {
 
 	outColor = inColor[1];
 	gl_Position = gl_in[1].gl_Position;
+    gl_Position.x = gl_Position.x - 0.15;
 	EmitVertex();
 
 	EndPrimitive();
