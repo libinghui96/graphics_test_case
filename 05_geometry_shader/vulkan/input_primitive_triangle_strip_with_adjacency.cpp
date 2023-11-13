@@ -97,21 +97,35 @@ struct Vertex {
     }
 };
 
-//        1-----3
-//       / \   / \
-//      /   \ /   \
-//     0-----2-----4
-// 0 -> 1 -> 2
-// 1 -> 3 -> 2 (reverse 1 -> 2)
-// 2 -> 3 -> 4 (reverse 3 -> 2)
-// num of primitives: n - 2 = 3
-// provoking point 0, 1, 2
+// triangle strips with adjacency
+// one triangle primitive with adjacency is defined by each vertex and the following 5 vertices
+// num of primitives: max(0, (vertexCount - 4) / 2)
+// provoking vertex: v[2i]
+//            5
+//           . .
+//          .   .
+//  1 . .  2-----6 . . 9
+//   .    / \   / \   .
+//    .  /   \ /   \ .
+//      0-----4-----8
+//       .   . .   .
+//        . .   . .
+//         3     7
+// 
+// 0 -> 2 -> 4
+// 2 -> 6 -> 4 (reverse 2 -> 4)
+// 4 -> 6 -> 8 (reverse 6 -> 4)
 const std::vector<Vertex> vertices = {
-    {{-0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}},
+    {{-0.75f, 0.5f}, {0.0f, 0.0f, 1.0f}},
+    {{-1.0f, 0.0f}, {1.0f, 0.0f, 0.0f}},
+    {{-0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}},
+    {{-0.5f, 1.0f}, {0.0f, 0.0f, 1.0f}},
+    {{-0.25f, 0.5f}, {1.0f, 0.0f, 0.0f}},
     {{-0.25f, -0.5f}, {0.0f, 1.0f, 0.0f}},
     {{0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
-    {{0.25f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-    {{0.5f, -0.0f}, {0.0f, 1.0f, 0.0f}}
+    {{0.0f, 1.0f}, {1.0f, 0.0f, 0.0f}},
+    {{0.25f, 0.5f}, {0.0f, 1.0f, 0.0f}},
+    {{0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}}
 };
 
 class HelloTriangleApplication {
@@ -368,6 +382,10 @@ private:
         }
 
         VkPhysicalDeviceFeatures deviceFeatures{};
+        vkGetPhysicalDeviceFeatures(physicalDevice, &deviceFeatures);
+        if (deviceFeatures.geometryShader != VK_TRUE) {
+            throw std::runtime_error("device not support geometry shader!");
+        }
 
         VkDeviceCreateInfo createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
@@ -517,9 +535,11 @@ private:
 
     void createGraphicsPipeline() {
         auto vertShaderCode = readFile("shaders/vert.spv");
+        auto geomShaderCode = readFile("shaders/geom.spv");
         auto fragShaderCode = readFile("shaders/frag.spv");
 
         VkShaderModule vertShaderModule = createShaderModule(vertShaderCode);
+        VkShaderModule geomShaderModule = createShaderModule(geomShaderCode);
         VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);
 
         VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
@@ -528,13 +548,19 @@ private:
         vertShaderStageInfo.module = vertShaderModule;
         vertShaderStageInfo.pName = "main";
 
+        VkPipelineShaderStageCreateInfo geomShaderStageInfo{};
+        geomShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+        geomShaderStageInfo.stage = VK_SHADER_STAGE_GEOMETRY_BIT;
+        geomShaderStageInfo.module = geomShaderModule;
+        geomShaderStageInfo.pName = "main";
+
         VkPipelineShaderStageCreateInfo fragShaderStageInfo{};
         fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
         fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
         fragShaderStageInfo.module = fragShaderModule;
         fragShaderStageInfo.pName = "main";
 
-        VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
+        VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, geomShaderStageInfo, fragShaderStageInfo };
 
         VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
         vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -549,7 +575,7 @@ private:
 
         VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
         inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-        inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP;
+        inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP_WITH_ADJACENCY;
         inputAssembly.primitiveRestartEnable = VK_FALSE;
 
         VkPipelineViewportStateCreateInfo viewportState{};
@@ -563,8 +589,8 @@ private:
         rasterizer.rasterizerDiscardEnable = VK_FALSE;
         rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
         rasterizer.lineWidth = 1.0f;
-        rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
-        rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE;
+        rasterizer.cullMode = VK_CULL_MODE_NONE;
+        rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
         rasterizer.depthBiasEnable = VK_FALSE;
 
         VkPipelineMultisampleStateCreateInfo multisampling{};
@@ -607,7 +633,7 @@ private:
 
         VkGraphicsPipelineCreateInfo pipelineInfo{};
         pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-        pipelineInfo.stageCount = 2;
+        pipelineInfo.stageCount = 3;
         pipelineInfo.pStages = shaderStages;
         pipelineInfo.pVertexInputState = &vertexInputInfo;
         pipelineInfo.pInputAssemblyState = &inputAssembly;
@@ -626,6 +652,7 @@ private:
         }
 
         vkDestroyShaderModule(device, fragShaderModule, nullptr);
+        vkDestroyShaderModule(device, geomShaderModule, nullptr);
         vkDestroyShaderModule(device, vertShaderModule, nullptr);
     }
 
