@@ -1,13 +1,16 @@
+// only emit vertex 0 of primitive to test the difference of input primitives
+// VK_PRIMITIVE_TOPOLOGY_LINE_LIST and VK_PRIMITIVE_TOPOLOGY_LINE_STRIP
 #version 450 core
 
-layout(points) in;
-layout(line_strip, max_vertices = 6) out;
+layout(lines) in;
+layout(line_strip, max_vertices = 8) out;
 
 layout(location = 0) in vec3 inColor[];
 layout(location = 0) out vec3 outColor;
 
 void main() {
 
+	// point 0 of line primitive
 	outColor = inColor[0];
 	outColor.x = outColor.x + 1.0;
 	gl_Position = gl_in[0].gl_Position;
@@ -32,6 +35,10 @@ void main() {
 	gl_Position.y = gl_Position.y + 0.1;
 	EmitVertex();
 
-    EndPrimitive();
+	outColor = inColor[1];
+	gl_Position = gl_in[1].gl_Position;
+	EmitVertex();
+
+	EndPrimitive();
 
 }
