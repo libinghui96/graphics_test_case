@@ -97,10 +97,34 @@ struct Vertex {
     }
 };
 
+//        1     3-----5
+//       / \     \   /
+//      /   \     \ /
+//     0-----2     4
+// 0 -> 1 -> 2
+// 3 -> 4 -> 5
+// num of primitives: n / 3 = 2
+// p[i] = {v[3i], v[3i+1], v[3i+2]}
+// provoking point: 0, 3
+// triangle primitives are defined around a shared common vertex, in this case 
+//
+//  3-----4
+//   \   /
+//    \ /
+//     5   clockwise
+//
+//  3-----5
+//   \   /
+//    \ /
+//     4   counter-clockwise
 const std::vector<Vertex> vertices = {
-    {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-    {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
-    {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
+    {{-0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}},
+    {{-0.25f, -0.5f}, {0.0f, 1.0f, 0.0f}},
+    {{0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
+    {{0.25f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+    // {{0.75f, -0.5f}, {0.0f, 1.0f, 0.0f}},
+    {{0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}},
+    {{0.75f, -0.5f}, {0.0f, 1.0f, 0.0f}}
 };
 
 class HelloTriangleApplication {
@@ -357,6 +381,7 @@ private:
         }
 
         VkPhysicalDeviceFeatures deviceFeatures{};
+        VkPhysicalDeviceFeatures deviceFeatures{};
         vkGetPhysicalDeviceFeatures(physicalDevice, &deviceFeatures);
         if (deviceFeatures.geometryShader != VK_TRUE) {
             throw std::runtime_error("device not support geometry shader!");
@@ -564,8 +589,8 @@ private:
         rasterizer.rasterizerDiscardEnable = VK_FALSE;
         rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
         rasterizer.lineWidth = 1.0f;
-        rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
-        rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE;
+        rasterizer.cullMode = VK_CULL_MODE_NONE;
+        rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
         rasterizer.depthBiasEnable = VK_FALSE;
 
         VkPipelineMultisampleStateCreateInfo multisampling{};
