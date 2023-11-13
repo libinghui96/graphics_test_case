@@ -11,13 +11,13 @@ void main() {
 	outColor = inColor[0];
 	outColor.x = outColor.x + 1.0;
 	gl_Position = gl_in[0].gl_Position;
-    gl_Position.x = gl_Position.x + 0.1;
+	gl_Position.x = gl_Position.x + 0.1;
 	EmitVertex();
 
 	outColor = inColor[0];
 	outColor.y = outColor.y + 1.0;
 	gl_Position = gl_in[0].gl_Position;
-    gl_Position.x = gl_Position.x - 0.1;
+	gl_Position.x = gl_Position.x - 0.1;
 	EmitVertex();
 
 	outColor = inColor[0];
