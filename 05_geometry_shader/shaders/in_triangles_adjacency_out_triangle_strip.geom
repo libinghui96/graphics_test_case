@@ -1,4 +1,4 @@
-// EndPrimitives will be insert implicitly when EmitVertex from different Prmitives
+// EndPrimitives will be inserted implicitly when EmitVertex from different Prmitives
 #version 450 core
 
 layout(triangles_adjacency) in;
