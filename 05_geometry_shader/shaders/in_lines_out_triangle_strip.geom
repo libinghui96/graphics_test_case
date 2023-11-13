@@ -1,3 +1,4 @@
+// this case show that primitive topology only effect in vertices emitted from the same primitive
 #version 450 core
 
 layout(lines) in;
