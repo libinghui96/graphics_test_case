@@ -10,11 +10,11 @@ void main() {
     outColor[gl_InvocationID] = inColor[gl_InvocationID];
 
     if (gl_InvocationID == 0) {
-        gl_TessLevelOuter[0] = 2.0;
-        gl_TessLevelOuter[1] = 2.0;
-        gl_TessLevelOuter[2] = 2.0;
-        gl_TessLevelOuter[3] = 2.0;
-        gl_TessLevelInner[0] = 2.0;
-        gl_TessLevelInner[1] = 2.0;
+        gl_TessLevelOuter[0] = 3;
+        gl_TessLevelOuter[1] = 3;
+        gl_TessLevelOuter[2] = 3;
+        // gl_TessLevelOuter[3] = 2.5;
+        gl_TessLevelInner[0] = 3;
+        // gl_TessLevelInner[1] = 2.5;
     }
 }
