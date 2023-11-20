@@ -1,9 +1,9 @@
 #version 450
 
-// layout(triangles) in;
-// layout(triangles, fractional_odd_spacing) in;
-// layout(triangles, fractional_even_spacing) in;
+// default is ccw, counter-clockwise
 layout(triangles, equal_spacing) in;
+// layout(triangles, equal_spacing, ccw) in;
+// layout(triangles, equal_spacing, cw) in;
 
 layout(location = 0) in vec3 inColor[];
 layout(location = 0) out vec3 outColor;
