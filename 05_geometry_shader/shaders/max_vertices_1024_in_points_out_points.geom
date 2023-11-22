@@ -16,7 +16,7 @@ void main() {
 	            outColor = inColor[0];
 	            gl_Position = gl_in[0].gl_Position;
                 gl_Position.x = gl_Position.x - 0.05;
-	            gl_Position.y = gl_Position.y - 0.1 - (i - (i % 8)) / 8 * 0.01;
+	            gl_Position.y = gl_Position.y - 0.1 - (i - (i % 8)) / 8 * 0.006;
 	            EmitVertex();
                 break;
             }
@@ -24,14 +24,14 @@ void main() {
 	            outColor = inColor[0];
 	            gl_Position = gl_in[0].gl_Position;
                 gl_Position.x = gl_Position.x + 0.05;
-	            gl_Position.y = gl_Position.y - 0.1 - (i - (i % 8)) / 8 * 0.01;
+	            gl_Position.y = gl_Position.y - 0.1 - (i - (i % 8)) / 8 * 0.006;
 	            EmitVertex();
                 break;
             }
             case 2: {
 	            outColor = inColor[0];
 	            gl_Position = gl_in[0].gl_Position;
-                gl_Position.x = gl_Position.x + 0.1 + (i - (i % 8)) / 8 * 0.01;
+                gl_Position.x = gl_Position.x + 0.1 + (i - (i % 8)) / 8 * 0.006;
 	            gl_Position.y = gl_Position.y - 0.05;
 	            EmitVertex();
                 break;
@@ -39,7 +39,7 @@ void main() {
             case 3: {
 	            outColor = inColor[0];
 	            gl_Position = gl_in[0].gl_Position;
-                gl_Position.x = gl_Position.x + 0.1 + (i - (i % 8)) / 8 * 0.01;
+                gl_Position.x = gl_Position.x + 0.1 + (i - (i % 8)) / 8 * 0.006;
 	            gl_Position.y = gl_Position.y + 0.05;
 	            EmitVertex();
                 break;
@@ -48,7 +48,7 @@ void main() {
 	            outColor = inColor[0];
 	            gl_Position = gl_in[0].gl_Position;
                 gl_Position.x = gl_Position.x + 0.05;
-	            gl_Position.y = gl_Position.y + 0.1 + (i - (i % 8)) / 8 * 0.01;
+	            gl_Position.y = gl_Position.y + 0.1 + (i - (i % 8)) / 8 * 0.006;
 	            EmitVertex();
                 break;
             }
@@ -56,14 +56,14 @@ void main() {
 	            outColor = inColor[0];
 	            gl_Position = gl_in[0].gl_Position;
                 gl_Position.x = gl_Position.x - 0.05;
-	            gl_Position.y = gl_Position.y + 0.1 + (i - (i % 8)) / 8 * 0.01;
+	            gl_Position.y = gl_Position.y + 0.1 + (i - (i % 8)) / 8 * 0.006;
 	            EmitVertex();
                 break;
             }
             case 6: {
 	            outColor = inColor[0];
 	            gl_Position = gl_in[0].gl_Position;
-                gl_Position.x = gl_Position.x - 0.1 - (i - (i % 8)) / 8 * 0.01;
+                gl_Position.x = gl_Position.x - 0.1 - (i - (i % 8)) / 8 * 0.006;
 	            gl_Position.y = gl_Position.y + 0.05;
 	            EmitVertex();
                 break;
@@ -71,7 +71,7 @@ void main() {
             case 7: {
 	            outColor = inColor[0];
 	            gl_Position = gl_in[0].gl_Position;
-                gl_Position.x = gl_Position.x - 0.1 - (i - (i % 8)) / 8 * 0.01;
+                gl_Position.x = gl_Position.x - 0.1 - (i - (i % 8)) / 8 * 0.006;
 	            gl_Position.y = gl_Position.y - 0.05;
 	            EmitVertex();
                 break;
