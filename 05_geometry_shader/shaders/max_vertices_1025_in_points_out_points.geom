@@ -1,24 +1,22 @@
 // max_vertices should be greater than 0 and less than or equal to maxGeometryOutputVertices.
 // refer to VulkanInfo to see the value of your GPU.
 // Generally speaking, Intel driver advertices this value to be 256 while Nvidia and AMD advertice 1024.
-
-// Error report: 'max_vertices' : too large, must be less than gl_MaxGeometryOutputVertices.
 #version 450 core
 
 layout(points) in;
-layout(line_strip, max_vertices = 257) out;
+layout(points, max_vertices = 1025) out;
 
 layout(location = 0) in vec3 inColor[];
 layout(location = 0) out vec3 outColor;
 
 void main() {
-    for (int i = 0; i < 257; i++) {
+    for (int i = 0; i < 1025; i++) {
         switch (i % 8) {
             case 0: {
 	            outColor = inColor[0];
 	            gl_Position = gl_in[0].gl_Position;
                 gl_Position.x = gl_Position.x - 0.05;
-	            gl_Position.y = gl_Position.y - 0.1 - (i - (i % 8)) / 8 * 0.0156;
+	            gl_Position.y = gl_Position.y - 0.1 - (i - (i % 8)) / 8 * 0.01;
 	            EmitVertex();
                 break;
             }
@@ -26,14 +24,14 @@ void main() {
 	            outColor = inColor[0];
 	            gl_Position = gl_in[0].gl_Position;
                 gl_Position.x = gl_Position.x + 0.05;
-	            gl_Position.y = gl_Position.y - 0.1 - (i - (i % 8)) / 8 * 0.0156;
+	            gl_Position.y = gl_Position.y - 0.1 - (i - (i % 8)) / 8 * 0.01;
 	            EmitVertex();
                 break;
             }
             case 2: {
 	            outColor = inColor[0];
 	            gl_Position = gl_in[0].gl_Position;
-                gl_Position.x = gl_Position.x + 0.1 + (i - (i % 8)) / 8 * 0.0156;
+                gl_Position.x = gl_Position.x + 0.1 + (i - (i % 8)) / 8 * 0.01;
 	            gl_Position.y = gl_Position.y - 0.05;
 	            EmitVertex();
                 break;
@@ -41,7 +39,7 @@ void main() {
             case 3: {
 	            outColor = inColor[0];
 	            gl_Position = gl_in[0].gl_Position;
-                gl_Position.x = gl_Position.x + 0.1 + (i - (i % 8)) / 8 * 0.0156;
+                gl_Position.x = gl_Position.x + 0.1 + (i - (i % 8)) / 8 * 0.01;
 	            gl_Position.y = gl_Position.y + 0.05;
 	            EmitVertex();
                 break;
@@ -50,7 +48,7 @@ void main() {
 	            outColor = inColor[0];
 	            gl_Position = gl_in[0].gl_Position;
                 gl_Position.x = gl_Position.x + 0.05;
-	            gl_Position.y = gl_Position.y + 0.1 + (i - (i % 8)) / 8 * 0.0156;
+	            gl_Position.y = gl_Position.y + 0.1 + (i - (i % 8)) / 8 * 0.01;
 	            EmitVertex();
                 break;
             }
@@ -58,14 +56,14 @@ void main() {
 	            outColor = inColor[0];
 	            gl_Position = gl_in[0].gl_Position;
                 gl_Position.x = gl_Position.x - 0.05;
-	            gl_Position.y = gl_Position.y + 0.1 + (i - (i % 8)) / 8 * 0.0156;
+	            gl_Position.y = gl_Position.y + 0.1 + (i - (i % 8)) / 8 * 0.01;
 	            EmitVertex();
                 break;
             }
             case 6: {
 	            outColor = inColor[0];
 	            gl_Position = gl_in[0].gl_Position;
-                gl_Position.x = gl_Position.x - 0.1 - (i - (i % 8)) / 8 * 0.0156;
+                gl_Position.x = gl_Position.x - 0.1 - (i - (i % 8)) / 8 * 0.01;
 	            gl_Position.y = gl_Position.y + 0.05;
 	            EmitVertex();
                 break;
@@ -73,7 +71,7 @@ void main() {
             case 7: {
 	            outColor = inColor[0];
 	            gl_Position = gl_in[0].gl_Position;
-                gl_Position.x = gl_Position.x - 0.1 - (i - (i % 8)) / 8 * 0.0156;
+                gl_Position.x = gl_Position.x - 0.1 - (i - (i % 8)) / 8 * 0.01;
 	            gl_Position.y = gl_Position.y - 0.05;
 	            EmitVertex();
                 break;
