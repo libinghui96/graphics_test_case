@@ -4,13 +4,13 @@
 #version 450 core
 
 layout(points) in;
-layout(points, max_vertices = 1025) out;
+layout(line_strip, max_vertices = 1024) out;
 
 layout(location = 0) in vec3 inColor[];
 layout(location = 0) out vec3 outColor;
 
 void main() {
-    for (int i = 0; i < 1025; i++) {
+    for (int i = 0; i < 1024; i++) {
         switch (i % 8) {
             case 0: {
                 outColor = inColor[0];
