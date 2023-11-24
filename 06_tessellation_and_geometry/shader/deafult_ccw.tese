@@ -8,7 +8,7 @@ layout(triangles, equal_spacing) in;
 layout(location = 0) in vec4 inColor[];
 layout(location = 1) in vec2 inTexture_uv[];
 layout(location = 0) out vec4 outColor;
-layout(location = 1) out vec2 outTexture_uv[];
+layout(location = 1) out vec2 outTexture_uv;
 
 void main() {
     float u = gl_TessCoord.x;
