@@ -1,12 +1,14 @@
 #version 450
 
-// layout(triangles) in;
-// layout(triangles, fractional_odd_spacing) in;
-// layout(triangles, fractional_even_spacing) in;
+// default is ccw, counter-clockwise
 layout(triangles, equal_spacing) in;
+// layout(triangles, equal_spacing, ccw) in;
+// layout(triangles, equal_spacing, cw) in;
 
-layout(location = 0) in vec3 inColor[];
-layout(location = 0) out vec3 outColor;
+layout(location = 0) in vec4 inColor[];
+layout(location = 1) in vec2 inTexture_uv[];
+layout(location = 0) out vec4 outColor;
+layout(location = 1) out vec2 outTexture_uv;
 
 void main() {
     float u = gl_TessCoord.x;
@@ -17,4 +19,5 @@ void main() {
 
     gl_Position = p0 * (1 - u - v) + p1 * u + p2 * v;
     outColor = inColor[0] * (1 - u -v) + inColor[1] * u + inColor[2] * v;
+    outTexture_uv = inTexture_uv[0] * (1 - u -v) + inTexture_uv[1] * u + inTexture_uv[2] * v;
 }
