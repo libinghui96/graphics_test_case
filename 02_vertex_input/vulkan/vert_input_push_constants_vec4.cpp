@@ -68,7 +68,7 @@ struct SwapChainSupportDetails {
 };
 
 struct Vertex {
-    glm::vec2 pos;
+    glm::vec3 pos;
     glm::vec3 color;
 
     static VkVertexInputBindingDescription getBindingDescription() {
@@ -85,7 +85,7 @@ struct Vertex {
 
         attributeDescriptions[0].binding = 0;
         attributeDescriptions[0].location = 0;
-        attributeDescriptions[0].format = VK_FORMAT_R32G32_SFLOAT;
+        attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
         attributeDescriptions[0].offset = offsetof(Vertex, pos);
 
         attributeDescriptions[1].binding = 0;
@@ -98,17 +98,10 @@ struct Vertex {
 };
 
 const std::vector<Vertex> vertices = {
-    {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-    {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
-    {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
+    {{0.0f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}},
+    {{0.5f, 0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}},
+    {{-0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}}
 };
-
-struct Offsets {
-    float scale;
-    float offset[4];
-};
-
-Offsets offsets = { 0.5, {0.0f, -0.75f, 0.0f, 0.0f} };
 
 class HelloTriangleApplication {
 public:
@@ -595,7 +588,7 @@ private:
         VkPushConstantRange range = {};
         range.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
         range.offset = 0;
-        range.size = 20; // float + %v4float (vec4) are aligned with vec4, so the range is 32 instead of 20.
+        range.size = 16; // %v4float (vec4) is defined as 16 bytes
 
         VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
         pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
@@ -748,9 +741,10 @@ private:
 
         vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
 
+        float OffsetPushConsts[4] = {0.0f, -0.75f, 0.0f, 0.0f};
         uint32_t offset = 0;
-        uint32_t size = 20;
-        vkCmdPushConstants(commandBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, offset, size, &offsets);
+        uint32_t size = 16;
+        vkCmdPushConstants(commandBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, offset, size, OffsetPushConsts);
 
         VkViewport viewport{};
         viewport.x = 0.0f;
