@@ -1,7 +1,7 @@
 # TODO LIST OF VULKAN CASES
 ***
 
-<em>Time : 2023/12/4<em>
+<em>Time : 2023/12/4</em>
 ## Push Constants
 - Add cases that use push constants in FS, GS, etc.
 - Add cases to test max counts of push constants can be used.
