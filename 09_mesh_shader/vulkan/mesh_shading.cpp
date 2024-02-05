@@ -32,7 +32,7 @@ const std::vector<const char*> deviceExtensions = {
     VK_KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME
 };
 
-VkClearColorValue default_clear_color = {{0.002f, 0.002f, 0.002f, 1.0f}};
+VkClearColorValue default_clear_color = { {0.002f, 0.002f, 0.002f, 1.0f} };
 
 #ifdef NDEBUG
 const bool enableValidationLayers = false;
@@ -319,8 +319,28 @@ private:
 
         VkPhysicalDeviceFeatures deviceFeatures{};
 
+        // enable meshShader feature
+        // VkPhysicalDeviceFeatures2KHR physical_device_features{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR };
+        // VkPhysicalDeviceMeshShaderFeaturesEXT extension{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MESH_SHADER_FEATURES_EXT };
+        // physical_device_features.pNext = &extension;
+        // vkGetPhysicalDeviceFeatures2KHR(physicalDevice, &physical_device_features);
+        // auto func = (PFN_vkGetPhysicalDeviceFeatures2KHR)vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceFeatures2KHR");
+        // if (func != nullptr) {
+        //     return func(physicalDevice, &physical_device_features);
+        // }
+        // else {
+        //     throw std::runtime_error("failed to get PhysicalDeviceFeatures2KHR!");
+        // }
+
+        //VkPhysicalDeviceMeshShaderFeaturesEXT ext_feature = {};
+        //VkPhysicalDeviceFeatures2 physical_features2 = {};
+        //physical_features2.pNext = &ext_feature;
+        //vkGetPhysicalDeviceFeatures2(physicalDevice, &physical_features2);
+        //ext_feature.meshShader = VK_TRUE;
+
         VkDeviceCreateInfo createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+        //createInfo.pNext = &physical_features2;
 
         createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
         createInfo.pQueueCreateInfos = queueCreateInfos.data();
@@ -604,8 +624,8 @@ private:
         renderPassInfo.renderArea.extent = swapChainExtent;
 
         VkClearValue clear_values[2];
-	    clear_values[0].color        = default_clear_color;
-	    clear_values[1].depthStencil = {0.0f, 0};
+        clear_values[0].color = default_clear_color;
+        clear_values[1].depthStencil = { 0.0f, 0 };
         renderPassInfo.clearValueCount = 2;
         renderPassInfo.pClearValues = clear_values;
 
@@ -627,11 +647,18 @@ private:
         scissor.extent = swapChainExtent;
         vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
 
-		// Mesh shaders need the vkCmdDrawMeshTasksExt
-		uint32_t num_workgroups_x = 1;
-		uint32_t num_workgroups_y = 1;
-		uint32_t num_workgroups_z = 1;
-		vkCmdDrawMeshTasksEXT(commandBuffer, num_workgroups_x, num_workgroups_y, num_workgroups_z);
+        // Mesh shaders need the vkCmdDrawMeshTasksExt
+        uint32_t num_workgroups_x = 1;
+        uint32_t num_workgroups_y = 1;
+        uint32_t num_workgroups_z = 1;
+        // vkCmdDrawMeshTasksEXT(commandBuffer, num_workgroups_x, num_workgroups_y, num_workgroups_z);
+        auto func = (PFN_vkCmdDrawMeshTasksEXT)vkGetInstanceProcAddr(instance, "vkCmdDrawMeshTasksEXT");
+        if (func != nullptr) {
+            return func(commandBuffer, num_workgroups_x, num_workgroups_y, num_workgroups_z);
+        }
+        else {
+            throw std::runtime_error("failed to use mesh tasks extension!");
+        }
 
         vkCmdEndRenderPass(commandBuffer);
 
