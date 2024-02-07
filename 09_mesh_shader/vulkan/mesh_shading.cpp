@@ -138,6 +138,7 @@ private:
         pickPhysicalDevice();
         createLogicalDevice();
         createSwapChain();
+        createImageViews();
         createRenderPass();
         createGraphicsPipeline();
         createFramebuffers();
@@ -319,28 +320,36 @@ private:
 
         VkPhysicalDeviceFeatures deviceFeatures{};
 
-        // enable meshShader feature
-        // VkPhysicalDeviceFeatures2KHR physical_device_features{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR };
-        // VkPhysicalDeviceMeshShaderFeaturesEXT extension{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MESH_SHADER_FEATURES_EXT };
-        // physical_device_features.pNext = &extension;
-        // vkGetPhysicalDeviceFeatures2KHR(physicalDevice, &physical_device_features);
-        // auto func = (PFN_vkGetPhysicalDeviceFeatures2KHR)vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceFeatures2KHR");
-        // if (func != nullptr) {
-        //     return func(physicalDevice, &physical_device_features);
-        // }
-        // else {
-        //     throw std::runtime_error("failed to get PhysicalDeviceFeatures2KHR!");
-        // }
+        // add an PhysicalDeviceFeatures2
+        VkPhysicalDeviceMeshShaderFeaturesEXT extFeature = {
+            VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MESH_SHADER_FEATURES_EXT
+        };
+        VkPhysicalDeviceFeatures2KHR feature = {
+            VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR,
+            &extFeature
+        };
 
-        //VkPhysicalDeviceMeshShaderFeaturesEXT ext_feature = {};
-        //VkPhysicalDeviceFeatures2 physical_features2 = {};
-        //physical_features2.pNext = &ext_feature;
-        //vkGetPhysicalDeviceFeatures2(physicalDevice, &physical_features2);
-        //ext_feature.meshShader = VK_TRUE;
+        auto func = (PFN_vkGetPhysicalDeviceFeatures2KHR)vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceFeatures2KHR");
+        if (func != nullptr) {
+            return func(physicalDevice, &feature);
+        }
+        else {
+            throw std::runtime_error("failed to get PhysicalDeviceFeatures2KHR!");
+        }
+
+        VkPhysicalDeviceMeshShaderFeaturesEXT enabledExtFeature = {
+            VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MESH_SHADER_FEATURES_EXT
+        };
+
+        VkPhysicalDeviceFeatures2KHR enabledFeature = {
+            VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR,
+            &enabledExtFeature
+        };
+        enabledExtFeature.meshShader = VK_TRUE;
 
         VkDeviceCreateInfo createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-        //createInfo.pNext = &physical_features2;
+        createInfo.pNext = &enabledFeature;
 
         createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
         createInfo.pQueueCreateInfos = queueCreateInfos.data();
@@ -409,6 +418,15 @@ private:
         if (vkCreateSwapchainKHR(device, &createInfo, nullptr, &swapChain) != VK_SUCCESS) {
             throw std::runtime_error("failed to create swap chain!");
         }
+        //auto func = (PFN_vkCreateSwapchainKHR)vkGetInstanceProcAddr(instance, "vkCreateSwapchainKHR");
+        //if (func != nullptr) {
+        //    if (func(device, &createInfo, nullptr, &swapChain) != VK_SUCCESS) {
+        //        throw std::runtime_error("failed to create swap chain!");
+        //    }
+        //}
+        //else {
+        //    throw std::runtime_error("failed to use vkCreateSwapchainKHR!");
+        //}
 
         vkGetSwapchainImagesKHR(device, swapChain, &imageCount, nullptr);
         swapChainImages.resize(imageCount);
@@ -416,6 +434,30 @@ private:
 
         swapChainImageFormat = surfaceFormat.format;
         swapChainExtent = extent;
+    }
+    void createImageViews() {
+        swapChainImageViews.resize(swapChainImages.size());
+
+        for (size_t i = 0; i < swapChainImages.size(); i++) {
+            VkImageViewCreateInfo createInfo{};
+            createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+            createInfo.image = swapChainImages[i];
+            createInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+            createInfo.format = swapChainImageFormat;
+            createInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+            createInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+            createInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+            createInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+            createInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+            createInfo.subresourceRange.baseMipLevel = 0;
+            createInfo.subresourceRange.levelCount = 1;
+            createInfo.subresourceRange.baseArrayLayer = 0;
+            createInfo.subresourceRange.layerCount = 1;
+
+            if (vkCreateImageView(device, &createInfo, nullptr, &swapChainImageViews[i]) != VK_SUCCESS) {
+                throw std::runtime_error("failed to create image views!");
+            }
+        }
     }
 
     void createRenderPass() {
