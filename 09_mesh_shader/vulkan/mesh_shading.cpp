@@ -318,31 +318,25 @@ private:
             queueCreateInfos.push_back(queueCreateInfo);
         }
 
-        VkPhysicalDeviceFeatures deviceFeatures{};
+        // VkPhysicalDeviceFeatures deviceFeatures{};
 
         // add an PhysicalDeviceFeatures2
         VkPhysicalDeviceMeshShaderFeaturesEXT extFeature = {
             VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MESH_SHADER_FEATURES_EXT
         };
-        VkPhysicalDeviceFeatures2KHR feature = {
-            VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR,
+        VkPhysicalDeviceFeatures2 feature = {
+            VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2,
             &extFeature
         };
 
-        auto func = (PFN_vkGetPhysicalDeviceFeatures2KHR)vkGetInstanceProcAddr(instance, "vkGetPhysicalDeviceFeatures2KHR");
-        if (func != nullptr) {
-            return func(physicalDevice, &feature);
-        }
-        else {
-            throw std::runtime_error("failed to get PhysicalDeviceFeatures2KHR!");
-        }
+        vkGetPhysicalDeviceFeatures2(physicalDevice, &feature);
 
         VkPhysicalDeviceMeshShaderFeaturesEXT enabledExtFeature = {
             VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MESH_SHADER_FEATURES_EXT
         };
 
-        VkPhysicalDeviceFeatures2KHR enabledFeature = {
-            VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2_KHR,
+        VkPhysicalDeviceFeatures2 enabledFeature = {
+            VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2,
             &enabledExtFeature
         };
         enabledExtFeature.meshShader = VK_TRUE;
@@ -354,7 +348,7 @@ private:
         createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
         createInfo.pQueueCreateInfos = queueCreateInfos.data();
 
-        createInfo.pEnabledFeatures = &deviceFeatures;
+        // createInfo.pEnabledFeatures = &deviceFeatures;
 
         createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
         createInfo.ppEnabledExtensionNames = deviceExtensions.data();
