@@ -499,10 +499,10 @@ private:
 
     void createGraphicsPipeline() {
         auto meshShaderCode = readFile("shaders/mesh.spv");
-        auto taskShaderCode = readFile("shaders/task.spv");
+        auto fragShaderCode = readFile("shaders/ps.spv");
 
         VkShaderModule meshShaderModule = createShaderModule(meshShaderCode);
-        VkShaderModule taskShaderModule = createShaderModule(taskShaderCode);
+        VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);
 
         VkPipelineShaderStageCreateInfo meshShaderStageInfo{};
         meshShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -510,13 +510,13 @@ private:
         meshShaderStageInfo.module = meshShaderModule;
         meshShaderStageInfo.pName = "main";
 
-        VkPipelineShaderStageCreateInfo taskShaderStageInfo{};
-        taskShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-        taskShaderStageInfo.stage = VK_SHADER_STAGE_TASK_BIT_EXT;
-        taskShaderStageInfo.module = taskShaderModule;
-        taskShaderStageInfo.pName = "main";
+        VkPipelineShaderStageCreateInfo fragShaderStageInfo{};
+        fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+        fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+        fragShaderStageInfo.module = fragShaderModule;
+        fragShaderStageInfo.pName = "main";
 
-        VkPipelineShaderStageCreateInfo shaderStages[] = { meshShaderStageInfo, taskShaderStageInfo };
+        VkPipelineShaderStageCreateInfo shaderStages[] = { meshShaderStageInfo, fragShaderStageInfo };
 
         VkPipelineViewportStateCreateInfo viewportState{};
         viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
@@ -591,7 +591,7 @@ private:
             throw std::runtime_error("failed to create graphics pipeline!");
         }
 
-        vkDestroyShaderModule(device, taskShaderModule, nullptr);
+        vkDestroyShaderModule(device, fragShaderModule, nullptr);
         vkDestroyShaderModule(device, meshShaderModule, nullptr);
     }
 
