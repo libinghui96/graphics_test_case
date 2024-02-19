@@ -690,7 +690,7 @@ private:
         // vkCmdDrawMeshTasksEXT(commandBuffer, num_workgroups_x, num_workgroups_y, num_workgroups_z);
         auto func = (PFN_vkCmdDrawMeshTasksEXT)vkGetInstanceProcAddr(instance, "vkCmdDrawMeshTasksEXT");
         if (func != nullptr) {
-            return func(commandBuffer, num_workgroups_x, num_workgroups_y, num_workgroups_z);
+            func(commandBuffer, num_workgroups_x, num_workgroups_y, num_workgroups_z);
         }
         else {
             throw std::runtime_error("failed to use mesh tasks extension!");
