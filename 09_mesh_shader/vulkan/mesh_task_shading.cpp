@@ -500,9 +500,11 @@ private:
     void createGraphicsPipeline() {
         auto meshShaderCode = readFile("shaders/mesh.spv");
         auto taskShaderCode = readFile("shaders/task.spv");
+        auto fragShaderCode = readFile("shaders/ps.spv");
 
         VkShaderModule meshShaderModule = createShaderModule(meshShaderCode);
         VkShaderModule taskShaderModule = createShaderModule(taskShaderCode);
+        VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);
 
         VkPipelineShaderStageCreateInfo meshShaderStageInfo{};
         meshShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -516,7 +518,13 @@ private:
         taskShaderStageInfo.module = taskShaderModule;
         taskShaderStageInfo.pName = "main";
 
-        VkPipelineShaderStageCreateInfo shaderStages[] = { meshShaderStageInfo, taskShaderStageInfo };
+        VkPipelineShaderStageCreateInfo fragShaderStageInfo{};
+        fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+        fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+        fragShaderStageInfo.module = fragShaderModule;
+        fragShaderStageInfo.pName = "main";
+
+        VkPipelineShaderStageCreateInfo shaderStages[] = { meshShaderStageInfo, taskShaderStageInfo, fragShaderStageInfo };
 
         VkPipelineViewportStateCreateInfo viewportState{};
         viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
@@ -573,7 +581,7 @@ private:
 
         VkGraphicsPipelineCreateInfo pipelineInfo{};
         pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-        pipelineInfo.stageCount = 2;
+        pipelineInfo.stageCount = 3;
         pipelineInfo.pStages = shaderStages;
         pipelineInfo.pVertexInputState = nullptr;
         pipelineInfo.pInputAssemblyState = nullptr;
@@ -591,6 +599,7 @@ private:
             throw std::runtime_error("failed to create graphics pipeline!");
         }
 
+        vkDestroyShaderModule(device, fragShaderModule, nullptr);
         vkDestroyShaderModule(device, taskShaderModule, nullptr);
         vkDestroyShaderModule(device, meshShaderModule, nullptr);
     }
